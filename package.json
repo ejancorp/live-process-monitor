@@ -4,19 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx mocha test/**/*.js",
     "lint": "eslint src/",
     "watch": "npx babel ./src -d ./dist -w",
-    "build": "npx eslint src/ && npx babel ./src -d ./dist",
-    "start": "npm run build && node dist/app.js"
+    "build": "rm -rf ./dist && npx eslint src/ && npx babel ./src -d ./dist",
+    "start": "node dist/app.js",
+    "example": "node example/script.js"
   },
   "author": "Ej Corpuz",
   "license": "ISC",
   "dependencies": {
-    "lodash": "^4.17.4",
-    "moment": "^2.19.2",
     "pidusage": "^1.2.0",
-    "socket.io": "^2.0.4"
+    "promise-retry": "^1.1.1",
+    "socket.io": "^2.0.4",
+    "tcp-port-used": "^0.1.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
