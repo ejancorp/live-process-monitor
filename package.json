@@ -2,7 +2,7 @@
   "name": "socket-process-monitor",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/app.js",
   "scripts": {
     "test": "npx mocha test/**/*.js",
     "lint": "eslint src/",
@@ -10,6 +10,10 @@
     "build": "rm -rf ./dist && npx eslint src/ && npx babel ./src -d ./dist",
     "start": "node dist/app.js",
     "example": "node example/script.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ejancorp/live-process-monitor.git"
   },
   "author": "Ej Corpuz",
   "license": "ISC",
