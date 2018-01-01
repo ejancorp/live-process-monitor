@@ -53,6 +53,7 @@ var ProcessMonitor = function () {
     value: function init() {
       this.io.on('connection', this._onConnect.bind(this));
       this.getAvailablePort(this.options.port).then(this._onPortAvailable.bind(this));
+      this.polling = this.setUsagePolling(this.emitUsage.bind(this));
     }
   }, {
     key: '_onPortAvailable',
@@ -118,7 +119,6 @@ var ProcessMonitor = function () {
   }, {
     key: '_onConnect',
     value: function _onConnect() {
-      this.polling = this.setUsagePolling(this.emitUsage.bind(this));
       this.sendMessageToCallback('Monitoring started on port: ' + this.options.port);
     }
   }, {
