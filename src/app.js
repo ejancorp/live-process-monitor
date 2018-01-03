@@ -22,8 +22,8 @@ class ProcessMonitor {
 
   init() {
     this.io.on('connection', this._onConnect.bind(this));
-    this.getAvailablePort(this.options.port)
-      .then(this._onPortAvailable.bind(this));
+    this.getAvailablePort(this.options.port).then(this._onPortAvailable.bind(this));
+    this.polling = this.setUsagePolling(this.emitUsage.bind(this));
   }
 
   _onPortAvailable(port) {
@@ -71,7 +71,6 @@ class ProcessMonitor {
   }
 
   _onConnect() {
-    this.polling = this.setUsagePolling(this.emitUsage.bind(this));
     this.sendMessageToCallback(`Monitoring started on port: ${this.options.port}`);
   }
 
