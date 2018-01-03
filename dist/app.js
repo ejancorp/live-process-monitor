@@ -41,7 +41,11 @@ var ProcessMonitor = function () {
 
     _classCallCheck(this, ProcessMonitor);
 
-    this.options = options;
+    this.options = Object.assign({
+      port: 8181,
+      checkInterval: 5000,
+      messageCallback: null
+    }, options);
     this.customData = customData;
     this.server = _http2.default.createServer();
     this.io = (0, _socket2.default)(this.server);
@@ -58,18 +62,22 @@ var ProcessMonitor = function () {
   }, {
     key: '_onPortAvailable',
     value: function _onPortAvailable(port) {
+      var _this = this;
+
       this.options.port = port;
-      this.server.listen(this.options.port);
+      this.server.listen(this.options.port, function () {
+        _this.sendMessageToCallback('Monitoring started on port: ' + _this.options.port);
+      });
     }
   }, {
     key: 'getAvailablePort',
     value: function getAvailablePort() {
-      var _this = this;
+      var _this2 = this;
 
       return new Promise(function (resolve, reject) {
         (0, _promiseRetry2.default)(function (retry) {
-          return _this.checkPortStatus(_this.options.port).catch(function (err) {
-            _this.options.port += 1;
+          return _this2.checkPortStatus(_this2.options.port).catch(function (err) {
+            _this2.options.port += 1;
 
             return retry(err);
           });
@@ -83,10 +91,10 @@ var ProcessMonitor = function () {
   }, {
     key: 'checkPortStatus',
     value: function checkPortStatus(targetPort) {
-      var _this2 = this;
+      var _this3 = this;
 
       return new Promise(function (resolve, reject) {
-        _this2.sendMessageToCallback('Trying Port ' + targetPort);
+        _this3.sendMessageToCallback('Trying Port ' + targetPort);
         _tcpPortUsed2.default.check(targetPort).then(function (status) {
           if (status) {
             return reject(new Error('Port ' + targetPort + ' is being used.'));
@@ -118,26 +126,24 @@ var ProcessMonitor = function () {
     }
   }, {
     key: '_onConnect',
-    value: function _onConnect() {
-      this.sendMessageToCallback('Monitoring started on port: ' + this.options.port);
-    }
+    value: function _onConnect() {}
   }, {
     key: 'emitUsage',
     value: function emitUsage() {
-      var _this3 = this;
+      var _this4 = this;
 
       return this.getUsage().then(function (usage) {
-        _this3.io.emit(Object.assign(_this3.customData, usage));
+        _this4.io.emit(Object.assign(_this4.customData, usage));
       });
     }
   }, {
     key: 'setUsagePolling',
     value: function setUsagePolling(method) {
-      var _this4 = this;
+      var _this5 = this;
 
       return setTimeout(function () {
         method.call().then(function () {
-          return _this4.setUsagePolling(method);
+          return _this5.setUsagePolling(method);
         });
       }, this.options.checkInterval);
     }
@@ -158,5 +164,14 @@ var ProcessMonitor = function () {
 
   return ProcessMonitor;
 }();
+
+if (require.main === module) {
+  var app = new ProcessMonitor({
+    messageCallback: function messageCallback(message) {
+      console.log(message);
+    }
+  });
+  app.init();
+}
 
 exports.default = ProcessMonitor;

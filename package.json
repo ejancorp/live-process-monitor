@@ -1,6 +1,6 @@
 {
   "name": "socket-process-monitor",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "dist/app.js",
   "scripts": {
@@ -8,8 +8,7 @@
     "lint": "eslint src/",
     "watch": "npx babel ./src -d ./dist -w",
     "build": "rm -rf ./dist && npx eslint src/ && npx babel ./src -d ./dist",
-    "start": "node dist/app.js",
-    "example": "node example/script.js"
+    "start": "node dist/app.js"
   },
   "repository": {
     "type": "git",

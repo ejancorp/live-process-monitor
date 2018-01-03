@@ -13,7 +13,11 @@ class ProcessMonitor {
     checkInterval: 5000,
     messageCallback: null,
   }, customData = {}) {
-    this.options = options;
+    this.options = Object.assign({
+      port: 8181,
+      checkInterval: 5000,
+      messageCallback: null,
+    }, options);
     this.customData = customData;
     this.server = http.createServer();
     this.io = socketio(this.server);
@@ -28,7 +32,9 @@ class ProcessMonitor {
 
   _onPortAvailable(port) {
     this.options.port = port;
-    this.server.listen(this.options.port);
+    this.server.listen(this.options.port, () => {
+      this.sendMessageToCallback(`Monitoring started on port: ${this.options.port}`);
+    });
   }
 
   getAvailablePort() {
@@ -71,7 +77,7 @@ class ProcessMonitor {
   }
 
   _onConnect() {
-    this.sendMessageToCallback(`Monitoring started on port: ${this.options.port}`);
+    // On success client connection callback
   }
 
   emitUsage() {
@@ -97,6 +103,16 @@ class ProcessMonitor {
       });
     });
   }
+}
+
+if (require.main === module) {
+  const app = new ProcessMonitor({
+    messageCallback: (message) => {
+      /* eslint no-console: 0 */
+      console.log(message);
+    },
+  });
+  app.init();
 }
 
 export default ProcessMonitor;
