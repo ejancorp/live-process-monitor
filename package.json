@@ -1,8 +1,8 @@
 {
   "name": "socket-process-monitor",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
-  "main": "src/app.js",
+  "main": "dist/app.js",
   "scripts": {
     "test": "npx mocha test/**/*.js",
     "lint": "eslint src/",
