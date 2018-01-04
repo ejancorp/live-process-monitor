@@ -133,7 +133,7 @@ var ProcessMonitor = function () {
       var _this4 = this;
 
       return this.getUsage().then(function (usage) {
-        _this4.io.emit(Object.assign(_this4.customData, usage));
+        _this4.io.emit('status', Object.assign(_this4.customData, usage));
       });
     }
   }, {

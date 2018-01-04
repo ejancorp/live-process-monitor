@@ -82,7 +82,7 @@ class ProcessMonitor {
 
   emitUsage() {
     return this.getUsage().then((usage) => {
-      this.io.emit(Object.assign(this.customData, usage));
+      this.io.emit('status', Object.assign(this.customData, usage));
     });
   }
 
