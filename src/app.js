@@ -24,12 +24,21 @@ class ProcessMonitor {
     this.polling = null;
   }
 
+  /**
+   * Setup sockets
+   * @return {Void}
+   */
   init() {
     this.io.on('connection', this._onConnect.bind(this));
     this.getAvailablePort(this.options.port).then(this._onPortAvailable.bind(this));
     this.polling = this.setUsagePolling(this.emitUsage.bind(this));
   }
 
+  /**
+   * Callback when an open port is found
+   * @param  {Integer} port port number
+   * @return {Void}
+   */
   _onPortAvailable(port) {
     this.options.port = port;
     this.server.listen(this.options.port, () => {
@@ -37,6 +46,10 @@ class ProcessMonitor {
     });
   }
 
+  /**
+   * Get available port
+   * @return {Promise} [description]
+   */
   getAvailablePort() {
     return new Promise((resolve, reject) => {
       promiseRetry(retry => this.checkPortStatus(this.options.port)
@@ -49,6 +62,11 @@ class ProcessMonitor {
     });
   }
 
+  /**
+   * Check port status, open or used already
+   * @param  {Integer} targetPort
+   * @return {Promise}
+   */
   checkPortStatus(targetPort) {
     return new Promise((resolve, reject) => {
       this.sendMessageToCallback(`Trying Port ${targetPort}`);
@@ -64,10 +82,19 @@ class ProcessMonitor {
     });
   }
 
+  /**
+   * Set custom object data
+   * @param {Object} [data={}] Set a custom data to be passed on the stats
+   */
   setCustomData(data = {}) {
     this.customData = data;
   }
 
+  /**
+   * [sendMessageToCallback description]
+   * @param  {String} [message=''] [description]
+   * @return {[type]}              [description]
+   */
   sendMessageToCallback(message = '') {
     if (typeof this.options.messageCallback !== 'function') {
       return false;
@@ -76,10 +103,18 @@ class ProcessMonitor {
     return this.options.messageCallback.call(null, message);
   }
 
+  /**
+   * [_onConnect description]
+   * @return {[type]} [description]
+   */
   _onConnect() {
     // On success client connection callback
   }
 
+  /**
+   * [emitUsage description]
+   * @return {[type]} [description]
+   */
   emitUsage() {
     return this.getUsage().then((usage) => {
       this.io.emit('status', Object.assign(this.customData, usage));
@@ -92,6 +127,10 @@ class ProcessMonitor {
     }, this.options.checkInterval);
   }
 
+  /**
+   * [getUsage description]
+   * @return {[type]} [description]
+   */
   getUsage() {
     return new Promise((resolve, reject) => {
       pidusage.stat(process.pid, { advanced: true }, (err, stat) => {
